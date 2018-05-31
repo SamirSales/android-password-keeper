@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PasswordKeeper</string>
+    <string name="action_settings">Settings</string>
+    <string name="log_in">Entrar</string>
+    <string name="new_registration">Nova inscrição</string>
+    <string name="login">Login</string>
+    <string name="password">Senha</string>
+    <string name="save">Salvar</string>
+</resources>
