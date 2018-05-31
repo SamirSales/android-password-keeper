@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">PasswordKeeper</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Password Keeper</string>
+    <string name="action_settings">Configurações</string>
     <string name="log_in">Entrar</string>
     <string name="new_registration">Nova inscrição</string>
     <string name="login">Login</string>
@@ -8,9 +8,17 @@
     <string name="save">Salvar</string>
     <string name="access_denied">Acesso Negado</string>
     <string name="no_registration_message">Nenhum registro foi encontrado</string>
-    <string name="hello_world">Hello world</string>
+    <string name="hello_world">Olá mundo</string>
     <string name="empty_fields_warning">Não deixe os campos em branco</string>
     <string name="web_site">Web site</string>
     <string name="repeated_registration_warning">Já existe registro desse site com esse login.</string>
     <string name="successfully_saved">Salvo com sucesso</string>
+    <string name="what_to_do">O que você deseja fazer?</string>
+    <string name="edit">Editar</string>
+    <string name="remove">Remover</string>
+    <string name="successfully_removed">Removido com sucesso</string>
+    <string name="remove_resgistration">Remover registro</string>
+    <string name="registration_remove_confirmation">Tem certeza que deseja remover esse registro?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
 </resources>

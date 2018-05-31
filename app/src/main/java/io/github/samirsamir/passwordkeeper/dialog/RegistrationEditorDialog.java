@@ -13,16 +13,12 @@ import io.github.samirsamir.passwordkeeper.R;
 public class RegistrationEditorDialog extends Dialog implements
         android.view.View.OnClickListener {
 
-    private Activity activity;
-    private Dialog dialog;
-    private Button btnSave;
     private EditText editSite, editLogin, editPassword;
 
     private RegistrationEditor registrationEditor;
 
     public RegistrationEditorDialog(Activity activity, RegistrationEditor registrationEditor) {
         super(activity);
-        this.activity = activity;
         this.registrationEditor = registrationEditor;
     }
 
@@ -32,7 +28,7 @@ public class RegistrationEditorDialog extends Dialog implements
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_add_registration);
-        btnSave = findViewById(R.id.btn_save);
+        Button btnSave = findViewById(R.id.btn_save);
         editSite = findViewById(R.id.edit_site);
         editLogin = findViewById(R.id.edit_login);
         editPassword = findViewById(R.id.edit_password);

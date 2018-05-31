@@ -1,7 +1,9 @@
 package io.github.samirsamir.passwordkeeper.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,13 +17,14 @@ import android.widget.Toast;
 import java.util.List;
 
 import io.github.samirsamir.passwordkeeper.R;
-import io.github.samirsamir.passwordkeeper.RegistrationListAdapter;
+import io.github.samirsamir.passwordkeeper.adapter.RegistrationListAdapter;
 import io.github.samirsamir.passwordkeeper.database.RegistrationDB;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
+import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private TextView textEmptyList;
     private ListView listView;
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         registrationListAdapter = new RegistrationListAdapter(this, registrations);
         listView.setAdapter(registrationListAdapter);
         listView.setOnItemClickListener(this);
+        listView.setOnItemLongClickListener(this);
     }
 
     private void refreshList(){
@@ -67,6 +71,55 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Registration registration = (Registration) registrationListAdapter.getItem(position);
         Toast.makeText(this, registration.getPassword(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Registration registration = (Registration) registrationListAdapter.getItem(position);
+
+        new RegistrationOptionsDialog(this, registration, new RegistrationOptionsDialog.RegistrationOptions() {
+            @Override
+            public boolean onClickEditButton(Registration registration) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onClickRemoveButton(final Registration registration) {
+
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setTitle(R.string.remove_resgistration);
+                alertDialogBuilder.setIcon(R.drawable.ic_delete_black_24dp);
+                alertDialogBuilder.setMessage(getString(R.string.registration_remove_confirmation) +
+                        "\n\n"+
+                        getString(R.string.web_site)+": "+registration.getSite()+"\n" +
+                        getString(R.string.login)+": "+registration.getLogin());
+
+                alertDialogBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RegistrationDB rDB = new RegistrationDB(MainActivity.this);
+                        rDB.deleteRecord(registration.getId());
+                        refreshList();
+                        Toast.makeText(MainActivity.this,
+                                R.string.successfully_removed, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+
+                alertDialogBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alertDialogBuilder.show();
+
+                return true;
+            }
+        }).show();
+
+        return true;
     }
 
     @Override
@@ -132,6 +185,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
     }
-
 
 }

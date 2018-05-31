@@ -1,4 +1,4 @@
-package io.github.samirsamir.passwordkeeper;
+package io.github.samirsamir.passwordkeeper.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 
 public class RegistrationListAdapter extends BaseAdapter{
