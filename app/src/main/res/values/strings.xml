@@ -6,4 +6,11 @@
     <string name="login">Login</string>
     <string name="password">Senha</string>
     <string name="save">Salvar</string>
+    <string name="access_denied">Acesso Negado</string>
+    <string name="no_registration_message">Nenhum registro foi encontrado</string>
+    <string name="hello_world">Hello world</string>
+    <string name="empty_fields_warning">Não deixe os campos em branco</string>
+    <string name="web_site">Web site</string>
+    <string name="repeated_registration_warning">Já existe registro desse site com esse login.</string>
+    <string name="successfully_saved">Salvo com sucesso</string>
 </resources>

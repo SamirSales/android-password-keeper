@@ -14,10 +14,20 @@
         android:text="@string/new_registration"/>
 
     <EditText
-        android:id="@+id/edit_login"
+        android:id="@+id/edit_site"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_below="@+id/text"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:hint="@string/web_site"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/edit_login"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_below="@+id/edit_site"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:hint="@string/login"

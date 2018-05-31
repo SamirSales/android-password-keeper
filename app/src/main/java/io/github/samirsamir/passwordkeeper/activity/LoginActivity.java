@@ -18,6 +18,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextPwd;
 
+    private Registration appUserAccess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +35,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
 
         RegistrationDB rDB = new RegistrationDB(this);
-        Registration resgAppAccess = rDB.getAppAccessUser();
+        appUserAccess = rDB.getAppUserAccess();
 
-        if(resgAppAccess == null){
+        if(appUserAccess == null){
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -64,12 +66,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void submitPassword(View view) {
-        if(editTextPwd.getText().toString().equals("123456")){
+        if(editTextPwd.getText().toString().equals(appUserAccess.getPassword())){
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }else{
             editTextPwd.setText("");
-            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.access_denied, Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -19,6 +19,7 @@ public class RegistrationDB extends SQLiteOpenHelper {
     private static final int VERSION = 1;
 
     private final String COLUMN_ID = "id";
+    private final String COLUMN_SITE = "site";
     private final String COLUMN_LOGIN = "login";
     private final String COLUMN_PASSWORD = "password";
     private final String COLUMN_USER_TYPE = "user_type";
@@ -33,6 +34,7 @@ public class RegistrationDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE if not exists "+ TABLE +"(" +
                 COLUMN_ID+" INTEGER PRIMARY KEY, " +
+                COLUMN_SITE+" TEXT, " +
                 COLUMN_LOGIN+" TEXT, " +
                 COLUMN_PASSWORD+" TEXT, " +
                 COLUMN_USER_TYPE+" TEXT);";
@@ -47,6 +49,7 @@ public class RegistrationDB extends SQLiteOpenHelper {
 
     private ContentValues getContentValues(Registration registration){
         ContentValues values = new ContentValues();
+        values.put(COLUMN_SITE, registration.getSite());
         values.put(COLUMN_LOGIN, registration.getLogin());
         values.put(COLUMN_PASSWORD, registration.getPassword());
         values.put(COLUMN_USER_TYPE, registration.getRegistrationType().getType());
@@ -71,19 +74,25 @@ public class RegistrationDB extends SQLiteOpenHelper {
         close();
     }
 
-    public Registration getAppAccessUser(){
+    private Registration getRegistrationByCursor(Cursor cursor){
+        Registration registration = new Registration();
+        registration.setId(cursor.getLong(0));
+        registration.setSite(cursor.getString(1));
+        registration.setLogin(cursor.getString(2));
+        registration.setPassword(cursor.getString(3));
+        registration.setRegistrationType(RegistrationType.getUserType(cursor.getString(4)));
+
+        return registration;
+    }
+
+    public Registration getAppUserAccess(){
         Cursor c = getWritableDatabase().rawQuery("SELECT * FROM "+ TABLE
                 +" WHERE "+COLUMN_USER_TYPE+" = '"+ RegistrationType.APP_ACCESS.getType()+"';",null);
 
         Registration appAccessRegistration = null;
 
         if(c.moveToNext()){
-            Registration registration = new Registration();
-            registration.setId(c.getLong(0));
-            registration.setLogin(c.getString(1));
-            registration.setPassword(c.getString(2));
-            registration.setRegistrationType(RegistrationType.getUserType(c.getString(3)));
-            appAccessRegistration = registration;
+            appAccessRegistration = getRegistrationByCursor(c);
         }
 
         c.close();
@@ -94,15 +103,26 @@ public class RegistrationDB extends SQLiteOpenHelper {
         ArrayList<Registration> registrations = new ArrayList<>();
         Cursor c = getWritableDatabase().rawQuery("SELECT * FROM "+ TABLE
                 +" WHERE "+COLUMN_USER_TYPE +" = '"+ RegistrationType.DEFAULT.getType()+"'"
-                +" ORDER BY LOWER("+ COLUMN_LOGIN + ") ASC;",null);
+                +" ORDER BY LOWER("+ COLUMN_SITE + ") ASC;",null);
 
         while(c.moveToNext()){
-            Registration registration = new Registration();
-            registration.setId(c.getLong(0));
-            registration.setLogin(c.getString(1));
-            registration.setPassword(c.getString(2));
-            registration.setRegistrationType(RegistrationType.getUserType(c.getString(3)));
-            registrations.add(registration);
+            registrations.add(getRegistrationByCursor(c));
+        }
+
+        c.close();
+        return registrations;
+    }
+
+    public ArrayList<Registration> getUsersBySiteAndLogin(String site, String login){
+        ArrayList<Registration> registrations = new ArrayList<>();
+        Cursor c = getWritableDatabase().rawQuery("SELECT * FROM "+ TABLE
+                +" WHERE "+COLUMN_SITE +" = '"+site.trim()+"'"
+                +" AND "+COLUMN_LOGIN+" = '"+login.trim()+"'"
+                +" AND "+COLUMN_USER_TYPE+" = '"+RegistrationType.DEFAULT.getType()+"'"
+                +";",null);
+
+        while(c.moveToNext()){
+            registrations.add(getRegistrationByCursor(c));
         }
 
         c.close();
@@ -112,13 +132,9 @@ public class RegistrationDB extends SQLiteOpenHelper {
     public ArrayList<Registration> getAll(){
         ArrayList<Registration> registrations = new ArrayList<>();
         Cursor c = getWritableDatabase().rawQuery("SELECT * FROM "+ TABLE +";",null);
+
         while(c.moveToNext()){
-            Registration registration = new Registration();
-            registration.setId(c.getLong(0));
-            registration.setLogin(c.getString(1));
-            registration.setPassword(c.getString(2));
-            registration.setRegistrationType(RegistrationType.getUserType(c.getString(3)));
-            registrations.add(registration);
+            registrations.add(getRegistrationByCursor(c));
         }
 
         c.close();
@@ -143,7 +159,7 @@ public class RegistrationDB extends SQLiteOpenHelper {
 
     public boolean deleteRecord(long rowId){
         open();
-        boolean b = db.delete(TABLE, "id="+rowId, null)>0;
+        boolean b = db.delete(TABLE, COLUMN_ID+"="+rowId, null)>0;
         close();
         return 	b;
     }

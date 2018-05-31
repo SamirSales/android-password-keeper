@@ -3,16 +3,18 @@ package io.github.samirsamir.passwordkeeper.entity;
 public class Registration {
 
     private long id;
+    private String site;
     private String login;
     private String password;
 
-    public Registration(){
-    }
-
-    public Registration(String login, String password, RegistrationType registrationType) {
+    public Registration(String site, String login, String password, RegistrationType registrationType) {
+        this.site = site;
         this.login = login;
         this.password = password;
         this.registrationType = registrationType;
+    }
+
+    public Registration(){
     }
 
     private RegistrationType registrationType;
@@ -47,5 +49,13 @@ public class Registration {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
     }
 }
