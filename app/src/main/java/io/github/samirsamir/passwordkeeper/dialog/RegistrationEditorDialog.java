@@ -39,9 +39,12 @@ public class RegistrationEditorDialog extends Dialog implements
         editPassword = findViewById(R.id.edit_password);
         btnSave.setOnClickListener(this);
 
+        TextView titleView = findViewById(R.id.dialog_title);
+
         if(!textTitle.isEmpty()){
-            TextView titleView = findViewById(R.id.text);
             titleView.setText(textTitle);
+        }else{
+            titleView.setText(getContext().getText(R.string.new_registration));
         }
 
         if(editRegistration != null){
