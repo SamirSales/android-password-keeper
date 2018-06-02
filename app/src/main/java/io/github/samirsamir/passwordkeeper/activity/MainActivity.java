@@ -19,6 +19,7 @@ import java.util.List;
 import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.adapter.RegistrationListAdapter;
 import io.github.samirsamir.passwordkeeper.database.RegistrationDB;
+import io.github.samirsamir.passwordkeeper.dialog.EditAccessDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
@@ -29,7 +30,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private TextView textEmptyList;
     private ListView listView;
-    RegistrationListAdapter registrationListAdapter;
+    private RegistrationListAdapter registrationListAdapter;
+
+    private EditAccessDialog editAccessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,11 +184,109 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_access) {
+            editAccessPasswordDialog();
+            return true;
+        }
+
+        if (id == R.id.action_export) {
+            return true;
+        }
+
+        if (id == R.id.action_import) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void editAccessPasswordDialog() {
+        final RegistrationDB rdb = new RegistrationDB(this);
+        final Registration accessRegistration = rdb.getAppUserAccess();
+
+        final boolean accessEditing = accessRegistration != null;
+
+        editAccessDialog = new EditAccessDialog(this, accessEditing, new EditAccessDialog.OnEditAccess() {
+            @Override
+            public boolean onClickSaveButton(String newPassword, String oldPassword) {
+
+                if(!accessEditing){
+                    if(!newPassword.trim().isEmpty()){
+
+                        // creating new access password
+                        Registration registration = new Registration(
+                                "","", newPassword, RegistrationType.APP_ACCESS);
+                        alertEditAccessPasswordConfirmation(registration, false);
+                        return false;
+                    } else {
+                        Toast.makeText(MainActivity.this,
+                                R.string.insert_password_warning,
+                                Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                } else {
+
+                    if(!newPassword.trim().isEmpty()){
+
+                        if(oldPassword.equals(accessRegistration.getPassword())){
+                            // editing access password
+                            accessRegistration.setPassword(newPassword);
+                            alertEditAccessPasswordConfirmation(accessRegistration, true);
+                            return false;
+                        }else{
+                            Toast.makeText(MainActivity.this,
+                                    R.string.incorrect_current_access_password,
+                                    Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+
+                    } else {
+                        Toast.makeText(MainActivity.this,
+                                R.string.insert_password_warning,
+                                Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+            }
+        });
+
+        editAccessDialog.show();
+    }
+
+    private void alertEditAccessPasswordConfirmation(final Registration registration, final boolean editing){
+        final RegistrationDB rdb = new RegistrationDB(this);
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setTitle(R.string.save_access_password_dialog_title);
+        alertDialogBuilder.setIcon(R.drawable.ic_lock_black_24dp);
+        alertDialogBuilder.setMessage(R.string.save_access_password_dialog_message);
+
+        alertDialogBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(editing){
+                    rdb.update(registration);
+                }else{
+                    rdb.add(registration);
+                }
+
+                Toast.makeText(MainActivity.this,
+                        R.string.access_password_successfully_defined,
+                        Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+                editAccessDialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.show();
     }
 
     private void setFloatingActionButton(){

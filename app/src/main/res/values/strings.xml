@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Chaveiro</string>
-    <string name="action_settings">Configurações</string>
+
+    <string name="action_access">Acesso</string>
+    <string name="action_import">Importar XLS</string>
+    <string name="action_export">Exportar XLS</string>
+
     <string name="log_in">Entrar</string>
     <string name="new_registration">Nova inscrição</string>
     <string name="login">Login</string>
@@ -23,4 +27,12 @@
     <string name="no">Não</string>
     <string name="registration_editing">Edição de registro</string>
     <string name="ok">Ok</string>
+    <string name="new_password">Senha nova</string>
+    <string name="old_password">Senha antiga</string>
+    <string name="edit_password_access">Edição da senha de acesso</string>
+    <string name="insert_password_warning">Insira uma senha</string>
+    <string name="access_password_successfully_defined">Nova senha de acesso definida com sucesso</string>
+    <string name="incorrect_current_access_password">A atual senha de acesso está incorreta</string>
+    <string name="save_access_password_dialog_title">Confirmação de acesso</string>
+    <string name="save_access_password_dialog_message">Tem certeza que deseja salvar a nova senha de acesso?</string>
 </resources>

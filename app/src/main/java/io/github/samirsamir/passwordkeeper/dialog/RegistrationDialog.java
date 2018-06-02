@@ -14,7 +14,6 @@ import io.github.samirsamir.passwordkeeper.entity.Registration;
 public class RegistrationDialog extends Dialog implements
         android.view.View.OnClickListener {
 
-
     private Registration registration;
 
     public RegistrationDialog(Activity activity, Registration registration) {

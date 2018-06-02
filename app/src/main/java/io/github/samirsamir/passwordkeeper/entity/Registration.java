@@ -32,7 +32,7 @@ public class Registration {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public String getLogin() {
