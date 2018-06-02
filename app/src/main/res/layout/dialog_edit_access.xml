@@ -18,16 +18,6 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edit_password"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:textSize="@dimen/dialog_edit_text"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:hint="@string/new_password"
-            android:inputType="textVisiblePassword|phone" />
-
-        <EditText
             android:id="@+id/edit_password_old"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +25,17 @@
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:hint="@string/old_password"
-            android:inputType="textVisiblePassword|phone" />
+            android:inputType="numberPassword" />
+
+        <EditText
+            android:id="@+id/edit_password"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textSize="@dimen/dialog_edit_text"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:hint="@string/new_password"
+            android:inputType="numberPassword" />
     </LinearLayout>
 
     <Button

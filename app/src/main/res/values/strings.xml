@@ -35,4 +35,5 @@
     <string name="incorrect_current_access_password">A atual senha de acesso está incorreta</string>
     <string name="save_access_password_dialog_title">Confirmação de acesso</string>
     <string name="save_access_password_dialog_message">Tem certeza que deseja salvar a nova senha de acesso?</string>
+    <string name="access_control">Controle de Acesso</string>
 </resources>

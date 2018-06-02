@@ -230,8 +230,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         if(oldPassword.equals(accessRegistration.getPassword())){
                             // editing access password
-                            accessRegistration.setPassword(newPassword);
-                            alertEditAccessPasswordConfirmation(accessRegistration, true);
+                            Registration reg = accessRegistration.getCopy();
+                            reg.setPassword(newPassword);
+                            alertEditAccessPasswordConfirmation(reg, true);
                             return false;
                         }else{
                             Toast.makeText(MainActivity.this,

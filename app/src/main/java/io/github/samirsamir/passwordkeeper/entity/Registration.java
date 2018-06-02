@@ -23,6 +23,15 @@ public class Registration {
         return registrationType;
     }
 
+    public Registration getCopy(){
+        Registration registration = new Registration();
+        registration.setId(id);
+        registration.setSite(site);
+        registration.setPassword(password);
+        registration.setRegistrationType(registrationType);
+        return registration;
+    }
+
     public void setRegistrationType(RegistrationType registrationType) {
         this.registrationType = registrationType;
     }
@@ -32,7 +41,7 @@ public class Registration {
     }
 
     public void setPassword(String password) {
-        this.password = password.trim();
+        this.password = password;
     }
 
     public String getLogin() {
