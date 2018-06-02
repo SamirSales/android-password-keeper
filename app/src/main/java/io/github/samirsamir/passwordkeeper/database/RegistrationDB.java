@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
+import io.github.samirsamir.passwordkeeper.util.InjectionDefenceSQL;
 
 public class RegistrationDB extends SQLiteOpenHelper {
 
@@ -26,8 +27,11 @@ public class RegistrationDB extends SQLiteOpenHelper {
 
     private SQLiteDatabase db;
 
+    private InjectionDefenceSQL idsql;
+
     public RegistrationDB(Context context) {
         super(context, TABLE, null, VERSION);
+        idsql = new InjectionDefenceSQL();
     }
 
     @Override
@@ -49,10 +53,10 @@ public class RegistrationDB extends SQLiteOpenHelper {
 
     private ContentValues getContentValues(Registration registration){
         ContentValues values = new ContentValues();
-        values.put(COLUMN_SITE, registration.getSite());
-        values.put(COLUMN_LOGIN, registration.getLogin());
-        values.put(COLUMN_PASSWORD, registration.getPassword());
-        values.put(COLUMN_USER_TYPE, registration.getRegistrationType().getType());
+        values.put(COLUMN_SITE, idsql.filter(registration.getSite()));
+        values.put(COLUMN_LOGIN, idsql.filter(registration.getLogin()));
+        values.put(COLUMN_PASSWORD, idsql.filter(registration.getPassword()));
+        values.put(COLUMN_USER_TYPE, idsql.filter(registration.getRegistrationType().getType()));
 
         return values;
     }
@@ -77,9 +81,9 @@ public class RegistrationDB extends SQLiteOpenHelper {
     private Registration getRegistrationByCursor(Cursor cursor){
         Registration registration = new Registration();
         registration.setId(cursor.getLong(0));
-        registration.setSite(cursor.getString(1));
-        registration.setLogin(cursor.getString(2));
-        registration.setPassword(cursor.getString(3));
+        registration.setSite(idsql.reclaim(cursor.getString(1)));
+        registration.setLogin(idsql.reclaim(cursor.getString(2)));
+        registration.setPassword(idsql.reclaim(cursor.getString(3)));
         registration.setRegistrationType(RegistrationType.getUserType(cursor.getString(4)));
 
         return registration;
@@ -116,8 +120,8 @@ public class RegistrationDB extends SQLiteOpenHelper {
     public ArrayList<Registration> getUsersBySiteAndLogin(String site, String login){
         ArrayList<Registration> registrations = new ArrayList<>();
         Cursor c = getWritableDatabase().rawQuery("SELECT * FROM "+ TABLE
-                +" WHERE "+COLUMN_SITE +" = '"+site.trim()+"'"
-                +" AND "+COLUMN_LOGIN+" = '"+login.trim()+"'"
+                +" WHERE "+COLUMN_SITE +" = '"+idsql.filter(site).trim()+"'"
+                +" AND "+COLUMN_LOGIN+" = '"+idsql.filter(login).trim()+"'"
                 +" AND "+COLUMN_USER_TYPE+" = '"+RegistrationType.DEFAULT.getType()+"'"
                 +";",null);
 
