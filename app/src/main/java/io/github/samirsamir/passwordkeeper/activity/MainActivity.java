@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void deleteRegistrationAlertConfirm(final Registration registration){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle(R.string.remove_resgistration);
+        alertDialogBuilder.setTitle(R.string.remove_registration);
         alertDialogBuilder.setIcon(R.drawable.ic_delete_black_24dp);
         alertDialogBuilder.setMessage(getString(R.string.registration_remove_confirmation));
 

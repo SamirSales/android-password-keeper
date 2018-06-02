@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Password Keeper</string>
+    <string name="app_name">Chaveiro</string>
     <string name="action_settings">Configurações</string>
     <string name="log_in">Entrar</string>
     <string name="new_registration">Nova inscrição</string>
@@ -17,7 +17,7 @@
     <string name="edit">Editar</string>
     <string name="remove">Remover</string>
     <string name="successfully_removed">Removido com sucesso</string>
-    <string name="remove_resgistration">Remover registro</string>
+    <string name="remove_registration">Remover registro</string>
     <string name="registration_remove_confirmation">Tem certeza que deseja remover esse registro?</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
