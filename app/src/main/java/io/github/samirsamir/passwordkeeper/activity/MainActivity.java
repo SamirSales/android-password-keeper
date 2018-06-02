@@ -19,6 +19,7 @@ import java.util.List;
 import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.adapter.RegistrationListAdapter;
 import io.github.samirsamir.passwordkeeper.database.RegistrationDB;
+import io.github.samirsamir.passwordkeeper.dialog.RegistrationDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Registration registration = (Registration) registrationListAdapter.getItem(position);
-        Toast.makeText(this, registration.getPassword(), Toast.LENGTH_SHORT).show();
+        new RegistrationDialog(this, registration).show();
     }
 
     @Override
