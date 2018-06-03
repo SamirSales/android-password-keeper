@@ -36,4 +36,6 @@
     <string name="save_access_password_dialog_title">Confirmação de acesso</string>
     <string name="save_access_password_dialog_message">Tem certeza que deseja salvar a nova senha de acesso?</string>
     <string name="access_control">Controle de Acesso</string>
+    <string name="file_successfully_created">Arquivo criado com sucesso</string>
+    <string name="export_xls_file">Exportar arquivo XLS</string>
 </resources>

@@ -20,6 +20,7 @@ import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.adapter.RegistrationListAdapter;
 import io.github.samirsamir.passwordkeeper.database.RegistrationDB;
 import io.github.samirsamir.passwordkeeper.dialog.EditAccessDialog;
+import io.github.samirsamir.passwordkeeper.dialog.PermissionDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
@@ -203,10 +204,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void exportExcelFileDialogPermission(){
-        RegistrationDB rDB = new RegistrationDB(this);
-        List<Registration> registrations = rDB.getDefaultUsers();
-        ExcelFileHandler efh = new ExcelFileHandler();
-        efh.exportToExcel(this, registrations);
+
+        new PermissionDialog(this, getString(R.string.export_xls_file), new PermissionDialog.OnPermissionAccess() {
+            @Override
+            public boolean onClickSaveButton(String password) {
+
+                RegistrationDB rDB = new RegistrationDB(MainActivity.this);
+                Registration regAccess = rDB.getAppUserAccess();
+
+                if(regAccess.getPassword().equals(password)){
+
+                    List<Registration> registrations = rDB.getDefaultUsers();
+                    ExcelFileHandler efh = new ExcelFileHandler();
+                    efh.exportToExcel(MainActivity.this, registrations);
+
+                    Toast.makeText(MainActivity.this,
+                            R.string.file_successfully_created, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                Toast.makeText(MainActivity.this,
+                        R.string.access_denied, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }).show();
     }
 
     private void editAccessPasswordDialog() {

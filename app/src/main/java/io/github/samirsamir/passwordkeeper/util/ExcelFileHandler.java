@@ -1,13 +1,7 @@
 package io.github.samirsamir.passwordkeeper.util;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -15,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -26,7 +21,7 @@ import jxl.write.biff.RowsExceededException;
 
 public class ExcelFileHandler {
 
-    private final String FILE_NAME = "TodoList.xls";
+    private final String FILE_NAME = "file.xls";
     private final String PATH_NAME = "excel";
     private final String SHEET_NAME = "Holy sheet";
 
@@ -34,19 +29,10 @@ public class ExcelFileHandler {
 
         //Saving file in external storage
         File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File(sdCard.getAbsolutePath() + "/"+PATH_NAME);
+        File directory = new File(sdCard.getAbsolutePath() +"/"+ activity.getString(R.string.app_name) + "/"+PATH_NAME);
 
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            //create directory if not exist
-            if(!directory.isDirectory()){
-                directory.mkdir();
-            }
-        } else {
-            // Request permission from the user
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        }
+        DirectoryHandler dirHandler = new DirectoryHandler();
+        dirHandler.create(activity, activity.getString(R.string.app_name) + "/"+PATH_NAME);
 
         //file path
         File file = new File(directory, FILE_NAME);
@@ -75,18 +61,6 @@ public class ExcelFileHandler {
                     sheet.addCell(new Label(2, row, reg.getPassword()));
                 }
 
-//                if (cursor.moveToFirst()) {
-//                    do {
-//                        String title = cursor.getString(cursor.getColumnIndex("site"));
-//                        String desc = cursor.getString(cursor.getColumnIndex("login"));
-//
-//                        int i = cursor.getPosition() + 1;
-//                        sheet.addCell(new Label(0, i, title));
-//                        sheet.addCell(new Label(1, i, desc));
-//                    } while (cursor.moveToNext());
-//                }
-//                //closing cursor
-//                cursor.close();
             } catch (RowsExceededException e) {
                 e.printStackTrace();
             } catch (WriteException e) {

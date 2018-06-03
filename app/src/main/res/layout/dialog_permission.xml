@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="#FFFFFF"
+    android:padding="6dp">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_title_dialog" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_password"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:textSize="@dimen/dialog_edit_text"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:hint="@string/new_password"
+            android:inputType="numberPassword" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/linear_layout"
+        android:textSize="@dimen/dialog_button_text"
+        android:text="@string/ok"/>
+</RelativeLayout>
