@@ -20,7 +20,7 @@
         <EditText
             android:id="@+id/edit_password_old"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:textSize="@dimen/dialog_edit_text"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"

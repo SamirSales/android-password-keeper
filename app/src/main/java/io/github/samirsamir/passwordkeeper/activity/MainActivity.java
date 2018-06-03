@@ -25,6 +25,7 @@ import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
+import io.github.samirsamir.passwordkeeper.util.ExcelFileHandler;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -190,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if (id == R.id.action_export) {
+            exportExcelFileDialogPermission();
             return true;
         }
 
@@ -198,6 +200,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void exportExcelFileDialogPermission(){
+        RegistrationDB rDB = new RegistrationDB(this);
+        List<Registration> registrations = rDB.getDefaultUsers();
+        ExcelFileHandler efh = new ExcelFileHandler();
+        efh.exportToExcel(this, registrations);
     }
 
     private void editAccessPasswordDialog() {
