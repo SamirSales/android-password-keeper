@@ -7,7 +7,7 @@ public class TreatmentInjectionSQL {
             return "";
         }
 
-        return text.replace("'", "''");
+        return text.replace("'", "''").trim();
     }
 
     public String reclaim(String text){
@@ -15,6 +15,6 @@ public class TreatmentInjectionSQL {
             return "";
         }
 
-        return text.replace("''", "'");
+        return text.replace("''", "'").trim();
     }
 }

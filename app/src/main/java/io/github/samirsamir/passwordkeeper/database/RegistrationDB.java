@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
+import io.github.samirsamir.passwordkeeper.util.CoderB64;
+import io.github.samirsamir.passwordkeeper.util.EncryptionHandler;
 import io.github.samirsamir.passwordkeeper.util.TreatmentInjectionSQL;
 
 public class RegistrationDB extends SQLiteOpenHelper {
@@ -28,6 +30,7 @@ public class RegistrationDB extends SQLiteOpenHelper {
     private SQLiteDatabase db;
 
     private TreatmentInjectionSQL tiSQL;
+    private final EncryptionHandler encryptionHandler = new CoderB64();
 
     public RegistrationDB(Context context) {
         super(context, TABLE, null, VERSION);
@@ -55,7 +58,8 @@ public class RegistrationDB extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_SITE, tiSQL.filter(registration.getSite()));
         values.put(COLUMN_LOGIN, tiSQL.filter(registration.getLogin()));
-        values.put(COLUMN_PASSWORD, tiSQL.filter(registration.getPassword()));
+//        values.put(COLUMN_PASSWORD, tiSQL.filter(registration.getPassword()));
+        values.put(COLUMN_PASSWORD, encryptionHandler.encrypt(registration.getPassword()));
         values.put(COLUMN_USER_TYPE, tiSQL.filter(registration.getRegistrationType().getType()));
 
         return values;
@@ -83,7 +87,8 @@ public class RegistrationDB extends SQLiteOpenHelper {
         registration.setId(cursor.getLong(0));
         registration.setSite(tiSQL.reclaim(cursor.getString(1)));
         registration.setLogin(tiSQL.reclaim(cursor.getString(2)));
-        registration.setPassword(tiSQL.reclaim(cursor.getString(3)));
+//        registration.setPassword(tiSQL.reclaim(cursor.getString(3)));
+        registration.setPassword(encryptionHandler.decrypt(cursor.getString(3)));
         registration.setRegistrationType(RegistrationType.getUserType(cursor.getString(4)));
 
         return registration;

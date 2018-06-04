@@ -1,16 +1,26 @@
 package io.github.samirsamir.passwordkeeper.util;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import io.github.samirsamir.passwordkeeper.R;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
+import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
+import jxl.Cell;
+import jxl.Sheet;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.write.Label;
@@ -76,4 +86,46 @@ public class ExcelFileHandler {
             e.printStackTrace();
         }
     }
+
+
+    public List<Registration> importFile(Activity activity, File excelFile){
+
+        ArrayList<Registration> registrations = new ArrayList<>();
+
+
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+            try {
+                InputStream is= new FileInputStream(excelFile);
+
+                Workbook wb = Workbook.getWorkbook(is);
+                Sheet sheet = wb.getSheet(0);
+
+                int row = sheet.getRows();
+
+                for(int i=0; i < row; i++){
+
+                    Registration reg = new Registration();
+                    reg.setSite(sheet.getCell(0, i).getContents());
+                    reg.setLogin(sheet.getCell(1, i).getContents());
+                    reg.setPassword(sheet.getCell(2, i).getContents());
+                    reg.setRegistrationType(RegistrationType.DEFAULT);
+                    registrations.add(reg);
+                }
+            }
+
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }else {
+            // Request permission from the user
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+        }
+
+        return registrations;
+    }
+
 }

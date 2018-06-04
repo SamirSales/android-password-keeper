@@ -1,11 +1,16 @@
 package io.github.samirsamir.passwordkeeper.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 
 import io.github.samirsamir.passwordkeeper.R;
@@ -26,6 +32,7 @@ import io.github.samirsamir.passwordkeeper.dialog.RegistrationEditorDialog;
 import io.github.samirsamir.passwordkeeper.dialog.RegistrationOptionsDialog;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
+import io.github.samirsamir.passwordkeeper.util.DirectoryHandler;
 import io.github.samirsamir.passwordkeeper.util.ExcelFileHandler;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -35,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private RegistrationListAdapter registrationListAdapter;
 
     private EditAccessDialog editAccessDialog;
+
+    private final int REQUEST_XLS_FILE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,10 +206,79 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if (id == R.id.action_import) {
+            importExcelFileDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_XLS_FILE && resultCode == RESULT_OK) {
+            Uri selectedFile = data.getData(); //The uri with the location of the file
+
+            DirectoryHandler directoryHandler = new DirectoryHandler();
+            String path = directoryHandler.getPath(this, selectedFile);
+
+            File file = new File(path);
+            ExcelFileHandler efh = new ExcelFileHandler();
+            List<Registration> registrations = efh.importFile(this, file);
+            saveImportedDataAlertConfirm(path, registrations);
+        }
+    }
+
+    private void saveImportedDataAlertConfirm(String path, final List<Registration> registrations){
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setTitle(getString(R.string.action_import));
+        alertDialogBuilder.setIcon(R.drawable.ic_file_download_black_24dp);
+        alertDialogBuilder.setMessage(getString(R.string.import_file_confirm_dialog)+"\n\n["+path+"]");
+
+        alertDialogBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveListOfRegistration(registrations);
+                refreshList();
+                dialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
+    private void saveListOfRegistration(List<Registration> registrations){
+        RegistrationDB rdb = new RegistrationDB(this);
+
+        for(Registration reg : registrations){
+            List<Registration> repeatedRegs = rdb.getUsersBySiteAndLogin(reg.getSite(), reg.getLogin());
+
+            if(repeatedRegs.size() > 0){
+                Registration repeated = repeatedRegs.get(0);
+                repeated.setPassword(reg.getPassword());
+                rdb.update(repeated);
+            }else {
+                rdb.add(reg);
+            }
+        }
+
+        Toast.makeText(this,
+                R.string.resgistration_import_finished, Toast.LENGTH_SHORT).show();
+    }
+
+    private void importExcelFileDialog(){
+        Intent intent = new Intent()
+                .setType("application/vnd.ms-excel").setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(
+                Intent.createChooser(intent, getString(R.string.select_a_file)), REQUEST_XLS_FILE);
     }
 
     private void exportExcelFileDialogPermission(){
