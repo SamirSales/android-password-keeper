@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Key Keeper</string>
+
+    <string name="action_access">Acesso</string>
+    <string name="action_import">Importar planilha (xls)</string>
+    <string name="action_export">Exportar planilha (xls)</string>
+
+    <string name="log_in">Entrar</string>
+    <string name="new_registration">Nova inscrição</string>
+    <string name="login">Login</string>
+    <string name="password">Senha</string>
+    <string name="save">Salvar</string>
+    <string name="access_denied">Acesso Negado</string>
+    <string name="no_registration_message">Nenhum registro foi encontrado</string>
+    <string name="hello_world">Olá mundo</string>
+    <string name="empty_fields_warning">Não deixe os campos em branco</string>
+    <string name="web_site">Web site</string>
+    <string name="repeated_registration_warning">Já existe registro desse site com esse login.</string>
+    <string name="successfully_saved">Salvo com sucesso</string>
+    <string name="what_to_do">O que você deseja fazer?</string>
+    <string name="edit">Editar</string>
+    <string name="remove">Remover</string>
+    <string name="successfully_removed">Removido com sucesso</string>
+    <string name="remove_registration">Remover registro</string>
+    <string name="registration_remove_confirmation">Tem certeza que deseja remover esse registro?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="registration_editing">Edição de registro</string>
+    <string name="ok">Ok</string>
+    <string name="new_password">Senha nova</string>
+    <string name="current_password">Senha atual</string>
+    <string name="edit_password_access">Edição da senha de acesso</string>
+    <string name="insert_password_warning">Insira uma senha</string>
+    <string name="access_password_successfully_defined">Nova senha de acesso definida com sucesso</string>
+    <string name="incorrect_current_access_password">A atual senha de acesso está incorreta</string>
+    <string name="save_access_password_dialog_title">Confirmação de acesso</string>
+    <string name="save_access_password_dialog_message">Tem certeza que deseja salvar a nova senha de acesso?</string>
+    <string name="access_control">Controle de Acesso</string>
+    <string name="file_successfully_created">Arquivo criado com sucesso</string>
+    <string name="export_xls_file">Exportar planilha (xls)</string>
+    <string name="select_a_file">Selecione um arquivo</string>
+    <string name="registration_import_finished">Importação de registros finalizada</string>
+    <string name="import_file_confirm_dialog">Tem certeza que deseja importar dados desse arquivo?</string>
+</resources>

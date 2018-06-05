@@ -24,7 +24,7 @@
             android:textSize="@dimen/dialog_edit_text"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
-            android:hint="@string/old_password"
+            android:hint="@string/current_password"
             android:inputType="numberPassword" />
 
         <EditText

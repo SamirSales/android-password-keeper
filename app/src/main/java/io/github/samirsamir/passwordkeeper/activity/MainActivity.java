@@ -10,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -270,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         Toast.makeText(this,
-                R.string.resgistration_import_finished, Toast.LENGTH_SHORT).show();
+                R.string.registration_import_finished, Toast.LENGTH_SHORT).show();
     }
 
     private void importExcelFileDialog(){
