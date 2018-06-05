@@ -33,6 +33,7 @@ The goal is simple, the application needs improving and there is a lot to do ...
 * new languages
 * security improvements
 * bug fixes.
+* and others...
 
 > All help is welcome!
 
