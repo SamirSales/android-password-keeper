@@ -2,13 +2,15 @@
 
 It is an Android application, developed in Java, that allows the user to maintain their bank of passwords in a mobile device. It is quite useful though it sounds dangerous.
 
+> For *android 4.1 jelly bean* and higher versions
+
 ## About security
 
 The user has the option to create a password to access the application. This prevents others from accessing the his/her bank of passwords.
 
 Another security measure is the encryption key saved in the application that encrypts saved passwords in the bank.
 
-The configuration of the encryption key is done in the file *CoderB64.java*. 
+The configuration of the encryption key is made in the file *CoderB64.java*. 
 
 ```java
 private final String KEY = "YOUR_KEY";
