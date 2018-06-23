@@ -34,7 +34,8 @@ import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
 import io.github.samirsamir.passwordkeeper.util.DirectoryHandler;
 import io.github.samirsamir.passwordkeeper.util.ExcelFileHandler;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener {
 
     private TextView textEmptyList;
     private ListView listView;
@@ -200,7 +201,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if (id == R.id.action_export) {
-            exportExcelFileDialogPermission();
+            RegistrationDB rDB = new RegistrationDB(MainActivity.this);
+
+            if(rDB.getAppUserAccess() != null){
+                exportExcelFileDialogPermission();
+            }else{
+                exportExcelFile();
+            }
+
             return true;
         }
 
@@ -290,13 +298,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Registration regAccess = rDB.getAppUserAccess();
 
                 if(regAccess.getPassword().equals(password)){
-
-                    List<Registration> registrations = rDB.getDefaultUsers();
-                    ExcelFileHandler efh = new ExcelFileHandler();
-                    efh.exportToExcel(MainActivity.this, registrations);
-
-                    Toast.makeText(MainActivity.this,
-                            R.string.file_successfully_created, Toast.LENGTH_SHORT).show();
+                    exportExcelFile();
                     return true;
                 }
 
@@ -305,6 +307,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return false;
             }
         }).show();
+    }
+
+    private void exportExcelFile(){
+        RegistrationDB rDB = new RegistrationDB(MainActivity.this);
+        List<Registration> registrations = rDB.getDefaultUsers();
+        ExcelFileHandler efh = new ExcelFileHandler();
+        efh.exportToExcel(MainActivity.this, registrations);
+
+        Toast.makeText(MainActivity.this,
+                R.string.file_successfully_created, Toast.LENGTH_SHORT).show();
     }
 
     private void editAccessPasswordDialog() {
