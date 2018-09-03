@@ -48,3 +48,9 @@ The goal is simple, the application needs improving and there is a lot to do ...
 
 ![Screenshot 1](screenshot/screenshot_1.png)
 ![Screenshot 2](screenshot/screenshot_2.png)
+
+## License
+
+MIT
+
+Copyright &copy; 2018 Samir Sales
