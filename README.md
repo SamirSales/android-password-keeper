@@ -27,6 +27,11 @@ It is important that when importing records, the information is on the first pag
 | Github | beltrano | 123456
 | wifi | no login | ilovemyfamily
 
+## Languages
+
+* English *(default)*
+* Brazilian Portuguese
+
 ## Goal
 
 The goal is simple, the application needs improving and there is a lot to do ...
@@ -43,3 +48,9 @@ The goal is simple, the application needs improving and there is a lot to do ...
 
 ![Screenshot 1](screenshot/screenshot_1.png)
 ![Screenshot 2](screenshot/screenshot_2.png)
+
+## License
+
+MIT
+
+Copyright &copy; 2018 Samir Sales
