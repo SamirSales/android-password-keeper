@@ -15,6 +15,10 @@ public class Registration {
     }
 
     public Registration(){
+        this.site = null;
+        this.login = null;
+        this.password = null;
+        this.registrationType = null;
     }
 
     private RegistrationType registrationType;

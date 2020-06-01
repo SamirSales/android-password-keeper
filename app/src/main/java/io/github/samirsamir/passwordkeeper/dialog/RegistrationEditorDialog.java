@@ -8,22 +8,28 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
 
 import io.github.samirsamir.passwordkeeper.R;
+import io.github.samirsamir.passwordkeeper.database.RegistrationDB;
 import io.github.samirsamir.passwordkeeper.entity.Registration;
 
-public class RegistrationEditorDialog extends Dialog implements
-        android.view.View.OnClickListener {
+public class RegistrationEditorDialog extends Dialog {
 
     private EditText editSite, editLogin, editPassword;
-
     private RegistrationEditor registrationEditor;
-
-    private String textTitle = "";
-    private Registration editRegistration = null;
+    private Registration editRegistration;
 
     public RegistrationEditorDialog(Activity activity, RegistrationEditor registrationEditor) {
+        this(activity, new Registration(), registrationEditor);
+    }
+
+    public RegistrationEditorDialog(Activity activity, Registration editRegistration,
+                                    RegistrationEditor registrationEditor) {
         super(activity);
+        this.editRegistration = editRegistration;
         this.registrationEditor = registrationEditor;
     }
 
@@ -33,20 +39,42 @@ public class RegistrationEditorDialog extends Dialog implements
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_add_registration);
-        Button btnSave = findViewById(R.id.btn_save);
+        setViews();
+    }
+
+    private void setViews(){
         editSite = findViewById(R.id.edit_site);
         editLogin = findViewById(R.id.edit_login);
         editPassword = findViewById(R.id.edit_password);
-        btnSave.setOnClickListener(this);
 
+        setSaveButton();
+        setTitleTextView();
+        fillTextFieldsIfNecessary();
+    }
+
+    private void setSaveButton(){
+        Button btnSave = findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSave();
+            }
+        });
+    }
+
+    private void setTitleTextView(){
         TextView titleView = findViewById(R.id.dialog_title);
+
+        String textTitle = "";
 
         if(!textTitle.isEmpty()){
             titleView.setText(textTitle);
         }else{
             titleView.setText(getContext().getText(R.string.new_registration));
         }
+    }
 
+    private void fillTextFieldsIfNecessary(){
         if(editRegistration != null){
             editSite.setText(editRegistration.getSite());
             editLogin.setText(editRegistration.getLogin());
@@ -54,28 +82,92 @@ public class RegistrationEditorDialog extends Dialog implements
         }
     }
 
-    public void setTextTitle(String textTitle){
-        this.textTitle = textTitle;
-    }
+    private void onClickSave(){
+        if(isAnyTextFieldNotFilled()){
+            showToastShortlyByCodeString(R.string.empty_fields_warning);
 
-    public void setFields(Registration editRegistration) {
-        this.editRegistration = editRegistration;
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        if(registrationEditor != null
-                && registrationEditor.onClickSaveButton(
-                    editSite.getText().toString(),
-                    editLogin.getText().toString(),
-                    editPassword.getText().toString())){
-            dismiss();
+        }else{
+            if(isNotDuplicatedLogin()){
+                saveRegistration();
+                showToastShortlyByCodeString(R.string.successfully_saved);
+                if(registrationEditor != null){
+                    registrationEditor.onAfterSuccessSaving();
+                }
+                dismiss();
+            }else{
+                showToastShortlyByCodeString(R.string.repeated_registration_warning);
+            }
         }
     }
 
+    private boolean isAnyTextFieldNotFilled(){
+        return getSite().trim().isEmpty()
+            || getLogin().trim().isEmpty()
+            || getPassword().trim().isEmpty();
+    }
+
+    private boolean isNotDuplicatedLogin(){
+        Registration savedRegistration = getOneUserBySiteAndLogin(getSite(), getLogin());
+        return savedRegistration == null || savedRegistration.getId() == editRegistration.getId();
+    }
+
+    private void saveRegistration(){
+        if(isEditingRegistration()){
+            updateRegistration();
+        }else{
+            createRegistration();
+        }
+    }
+
+    private boolean isEditingRegistration(){
+        return false;
+    }
+
+    private void updateRegistration(){
+        setEditRegistrationByViews();
+        RegistrationDB registrationDB = new RegistrationDB(getContext());
+        registrationDB.update(editRegistration);
+    }
+
+    private void createRegistration(){
+        setEditRegistrationByViews();
+        RegistrationDB registrationDB = new RegistrationDB(getContext());
+        registrationDB.add(editRegistration);
+    }
+
+    private void setEditRegistrationByViews(){
+        editRegistration.setSite(getSite());
+        editRegistration.setLogin(getLogin());
+        editRegistration.setPassword(getPassword());
+    }
+
+    private String getSite(){
+        return editSite.getText().toString();
+    }
+
+    private String getLogin(){
+        return editLogin.getText().toString();
+    }
+
+    private String getPassword(){
+        return editPassword.getText().toString();
+    }
+
+    private Registration getOneUserBySiteAndLogin(String site, String login){
+        RegistrationDB rDB = new RegistrationDB(getContext());
+        List<Registration> registrations = rDB.getUsersBySiteAndLogin(site, login);
+
+        if(registrations.size() > 0){
+            return registrations.get(0);
+        }
+        return null;
+    }
+
+    private void showToastShortlyByCodeString(int codeString){
+        Toast.makeText(getContext(), codeString, Toast.LENGTH_SHORT).show();
+    }
+
     public interface RegistrationEditor{
-        // it must return true to close the dialog
-        boolean onClickSaveButton(String site, String login, String password);
+        void onAfterSuccessSaving();
     }
 }

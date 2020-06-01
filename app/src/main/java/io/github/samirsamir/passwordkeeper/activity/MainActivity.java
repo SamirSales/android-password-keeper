@@ -34,13 +34,12 @@ import io.github.samirsamir.passwordkeeper.entity.RegistrationType;
 import io.github.samirsamir.passwordkeeper.util.DirectoryHandler;
 import io.github.samirsamir.passwordkeeper.util.ExcelFileHandler;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
-        AdapterView.OnItemLongClickListener {
+public class MainActivity extends AppCompatActivity
+        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private TextView textEmptyList;
     private ListView listView;
     private RegistrationListAdapter registrationListAdapter;
-
     private EditAccessDialog editAccessDialog;
 
     private final int REQUEST_XLS_FILE = 123;
@@ -49,37 +48,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setViews();
+    }
 
+    private void setViews(){
         textEmptyList = findViewById(R.id.text_empty_list);
         listView = findViewById(R.id.list_view);
-
+        setToolBar();
         setFloatingActionButton();
+    }
+
+    private void setToolBar(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setListView();
+    }
 
-        RegistrationDB rDB = new RegistrationDB(this);
-        List<Registration> registrations = rDB.getDefaultUsers();
-        showTextEmptyList(registrations.size() == 0);
+    private void setListView(){
+        refreshEmptyListTextWarning();
+        List<Registration> registrations = getDefaultUsers();
         registrationListAdapter = new RegistrationListAdapter(this, registrations);
         listView.setAdapter(registrationListAdapter);
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
-    }
-
-    private void refreshList(){
-        RegistrationDB rDB = new RegistrationDB(this);
-        List<Registration> registrations = rDB.getDefaultUsers();
-        showTextEmptyList(registrations.size() == 0);
-        registrationListAdapter.reset(registrations);
-    }
-
-    private void showTextEmptyList(boolean show){
-        textEmptyList.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -91,69 +87,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Registration registration = (Registration) registrationListAdapter.getItem(position);
+        showRegistrationOptionsDialog(registration);
+        return true;
+    }
 
-        new RegistrationOptionsDialog(this, registration, new RegistrationOptionsDialog.RegistrationOptions() {
+    private void showRegistrationOptionsDialog(Registration registration){
+        new RegistrationOptionsDialog(this, registration,
+                new RegistrationOptionsDialog.RegistrationOptions() {
             @Override
             public boolean onClickEditButton(Registration registration) {
-                editRegistration(registration);
+                showEditRegistrationDialog(registration);
                 return true;
             }
 
             @Override
             public boolean onClickRemoveButton(Registration registration) {
-                deleteRegistrationAlertConfirm(registration);
+                showDeleteRegistrationAlertConfirm(registration);
                 return true;
             }
         }).show();
-
-        return true;
     }
 
-    private void editRegistration(final Registration registration){
-
-        RegistrationEditorDialog dialog = new RegistrationEditorDialog(MainActivity.this,
-                 new RegistrationEditorDialog.RegistrationEditor() {
-                    @Override
-                    public boolean onClickSaveButton(String site, String login, String password) {
-
-                        if(site.trim().isEmpty() || login.trim().isEmpty() || password.trim().isEmpty()){
-                            Toast.makeText(MainActivity.this,
-                                    R.string.empty_fields_warning,
-                                    Toast.LENGTH_SHORT).show();
-                            return false;
-                        }else{
-                            //verify if login is not duplicated
-                            RegistrationDB rDB = new RegistrationDB(MainActivity.this);
-                            List<Registration> duplicatedRegs = rDB.getUsersBySiteAndLogin(site, login);
-                            Registration regSaved = duplicatedRegs.size() > 0 ? duplicatedRegs.get(0) : null;
-
-                            if(regSaved == null || regSaved.getId() == registration.getId()){
-                                registration.setSite(site);
-                                registration.setLogin(login);
-                                registration.setPassword(password);
-                                rDB.update(registration);
-
-                                Toast.makeText(MainActivity.this,
-                                        R.string.successfully_saved,
-                                        Toast.LENGTH_SHORT).show();
-                                refreshList();
-                                return true;
-                            }else{
-                                Toast.makeText(MainActivity.this,
-                                        R.string.repeated_registration_warning,
-                                        Toast.LENGTH_SHORT).show();
-                                return false;
-                            }
-                        }
-                    }
-                });
-
-        dialog.setTextTitle(getString(R.string.registration_editing));
-        dialog.setFields(registration);
+    private void showEditRegistrationDialog(final Registration registration){
+        RegistrationEditorDialog dialog = new RegistrationEditorDialog(
+                this, registration, getRegistrationEditor());
         dialog.show();
     }
 
-    private void deleteRegistrationAlertConfirm(final Registration registration){
+    private void showDeleteRegistrationAlertConfirm(final Registration registration){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
         alertDialogBuilder.setTitle(R.string.remove_registration);
         alertDialogBuilder.setIcon(R.drawable.ic_delete_black_24dp);
@@ -165,8 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 RegistrationDB rDB = new RegistrationDB(MainActivity.this);
                 rDB.deleteRecord(registration.getId());
                 refreshList();
-                Toast.makeText(MainActivity.this,
-                        R.string.successfully_removed, Toast.LENGTH_SHORT).show();
+                showToastShortlyByCodeString(R.string.successfully_removed);
                 dialog.dismiss();
             }
         });
@@ -276,8 +236,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
 
-        Toast.makeText(this,
-                R.string.registration_import_finished, Toast.LENGTH_SHORT).show();
+        showToastShortlyByCodeString(R.string.registration_import_finished);
     }
 
     private void importExcelFileDialog(){
@@ -302,8 +261,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     return true;
                 }
 
-                Toast.makeText(MainActivity.this,
-                        R.string.access_denied, Toast.LENGTH_SHORT).show();
+                showToastShortlyByCodeString(R.string.access_denied);
                 return false;
             }
         }).show();
@@ -314,9 +272,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         List<Registration> registrations = rDB.getDefaultUsers();
         ExcelFileHandler efh = new ExcelFileHandler();
         efh.exportToExcel(MainActivity.this, registrations);
-
-        Toast.makeText(MainActivity.this,
-                R.string.file_successfully_created, Toast.LENGTH_SHORT).show();
+        showToastShortlyByCodeString(R.string.file_successfully_created);
     }
 
     private void editAccessPasswordDialog() {
@@ -338,9 +294,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         alertEditAccessPasswordConfirmation(registration, false);
                         return false;
                     } else {
-                        Toast.makeText(MainActivity.this,
-                                R.string.insert_password_warning,
-                                Toast.LENGTH_SHORT).show();
+                        showToastShortlyByCodeString(R.string.insert_password_warning);
                         return false;
                     }
                 } else {
@@ -354,16 +308,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             alertEditAccessPasswordConfirmation(reg, true);
                             return false;
                         }else{
-                            Toast.makeText(MainActivity.this,
-                                    R.string.incorrect_current_access_password,
-                                    Toast.LENGTH_SHORT).show();
+                            showToastShortlyByCodeString(R.string.incorrect_current_access_password);
                             return false;
                         }
 
                     } else {
-                        Toast.makeText(MainActivity.this,
-                                R.string.insert_password_warning,
-                                Toast.LENGTH_SHORT).show();
+                        showToastShortlyByCodeString(R.string.insert_password_warning);
                         return false;
                     }
                 }
@@ -390,10 +340,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     rdb.add(registration);
                 }
 
-                Toast.makeText(MainActivity.this,
-                        R.string.access_password_successfully_defined,
-                        Toast.LENGTH_SHORT).show();
-
+                showToastShortlyByCodeString(R.string.access_password_successfully_defined);
                 dialog.dismiss();
                 editAccessDialog.dismiss();
             }
@@ -412,43 +359,51 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void setFloatingActionButton(){
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-
-                new RegistrationEditorDialog(MainActivity.this,
-                    new RegistrationEditorDialog.RegistrationEditor() {
-                        @Override
-                        public boolean onClickSaveButton(String site, String login, String password) {
-
-                            if(site.trim().isEmpty() || login.trim().isEmpty() || password.trim().isEmpty()){
-                                Toast.makeText(MainActivity.this,
-                                        R.string.empty_fields_warning, Toast.LENGTH_SHORT).show();
-                                return false;
-                            }else{
-                                //verify if login is not duplicated
-                                RegistrationDB rDB = new RegistrationDB(MainActivity.this);
-                                List<Registration> regis = rDB.getUsersBySiteAndLogin(site, login);
-
-                                if(regis.size() == 0){
-                                    Registration reg = new Registration(site, login, password, RegistrationType.DEFAULT);
-                                    rDB.add(reg);
-
-                                    Toast.makeText(MainActivity.this,
-                                            R.string.successfully_saved,
-                                            Toast.LENGTH_SHORT).show();
-                                    refreshList();
-                                    return true;
-                                }else{
-                                    Toast.makeText(MainActivity.this,
-                                            R.string.repeated_registration_warning,
-                                            Toast.LENGTH_SHORT).show();
-                                    return false;
-                                }
-                            }
-                        }
-                    }).show();
+                showNewRegistrationDialog();
             }
         });
     }
 
+    private void showNewRegistrationDialog(){
+        RegistrationEditorDialog dialog = new RegistrationEditorDialog(
+                this, getRegistrationEditor());
+        dialog.show();
+    }
+
+    private RegistrationEditorDialog.RegistrationEditor getRegistrationEditor(){
+        return new RegistrationEditorDialog.RegistrationEditor() {
+            @Override
+            public void onAfterSuccessSaving() {
+                refreshList();
+            }
+        };
+    }
+
+    private void refreshList(){
+        refreshEmptyListTextWarning();
+        List<Registration> registrations = getDefaultUsers();
+        registrationListAdapter.reset(registrations);
+    }
+
+    private void refreshEmptyListTextWarning(){
+        List<Registration> registrations = getDefaultUsers();
+        boolean hasNoUser = registrations.size() == 0;
+        if(hasNoUser){
+            textEmptyList.setVisibility(View.VISIBLE);
+        }else{
+            textEmptyList.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private List<Registration> getDefaultUsers(){
+        RegistrationDB registrationDB = new RegistrationDB(this);
+        return registrationDB.getDefaultUsers();
+    }
+
+    private void showToastShortlyByCodeString(int codeString){
+        Toast.makeText(this, codeString, Toast.LENGTH_SHORT).show();
+    }
 }

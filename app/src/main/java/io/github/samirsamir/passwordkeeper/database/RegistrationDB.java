@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -58,10 +59,8 @@ public class RegistrationDB extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_SITE, tiSQL.filter(registration.getSite()));
         values.put(COLUMN_LOGIN, tiSQL.filter(registration.getLogin()));
-//        values.put(COLUMN_PASSWORD, tiSQL.filter(registration.getPassword()));
         values.put(COLUMN_PASSWORD, encryptionHandler.encrypt(registration.getPassword()));
         values.put(COLUMN_USER_TYPE, tiSQL.filter(registration.getRegistrationType().getType()));
-
         return values;
     }
 
@@ -87,10 +86,8 @@ public class RegistrationDB extends SQLiteOpenHelper {
         registration.setId(cursor.getLong(0));
         registration.setSite(tiSQL.reclaim(cursor.getString(1)));
         registration.setLogin(tiSQL.reclaim(cursor.getString(2)));
-//        registration.setPassword(tiSQL.reclaim(cursor.getString(3)));
         registration.setPassword(encryptionHandler.decrypt(cursor.getString(3)));
         registration.setRegistrationType(RegistrationType.getUserType(cursor.getString(4)));
-
         return registration;
     }
 
@@ -103,7 +100,6 @@ public class RegistrationDB extends SQLiteOpenHelper {
         if(c.moveToNext()){
             appAccessRegistration = getRegistrationByCursor(c);
         }
-
         c.close();
         return appAccessRegistration;
     }
@@ -117,7 +113,6 @@ public class RegistrationDB extends SQLiteOpenHelper {
         while(c.moveToNext()){
             registrations.add(getRegistrationByCursor(c));
         }
-
         c.close();
         return registrations;
     }
@@ -133,7 +128,6 @@ public class RegistrationDB extends SQLiteOpenHelper {
         while(c.moveToNext()){
             registrations.add(getRegistrationByCursor(c));
         }
-
         c.close();
         return registrations;
     }
@@ -145,7 +139,6 @@ public class RegistrationDB extends SQLiteOpenHelper {
         while(c.moveToNext()){
             registrations.add(getRegistrationByCursor(c));
         }
-
         c.close();
         return registrations;
     }
